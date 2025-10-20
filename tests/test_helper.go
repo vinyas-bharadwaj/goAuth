@@ -125,9 +125,10 @@ func cleanupOTP(t *testing.T, email string) {
 
 // Setup test environment
 func setupTest(t *testing.T) (*sql.DB, *AuthServer) {
-	// Load environment variables
+	// Try to load environment variables, but don't fail if .env doesn't exist
 	if err := config.LoadEnv(); err != nil {
-		t.Fatalf("Failed to load .env: %v", err)
+		t.Logf("Warning: Could not load .env file: %v", err)
+		// In CI, environment variables should be set directly
 	}
 
 	// Try to initialize Redis, but don't fail if it's not available

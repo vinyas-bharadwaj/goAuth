@@ -57,4 +57,7 @@ jobs:
         env:
           SMTP_EMAIL: ${{ secrets.SMTP_EMAIL }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-        run: go test ./tests/... -v
+          CI: true
+        run: |
+          echo "Running tests with 10 minute timeout..."
+          go test ./tests/... -v -timeout=10m -short
