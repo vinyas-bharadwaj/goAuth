@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.21.12
-// source: proto/auth.proto
+// source: auth.proto
 
 package proto
 
@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	AuthService_Signup_FullMethodName        = "/auth.AuthService/Signup"
+	AuthService_VerifySignup_FullMethodName  = "/auth.AuthService/VerifySignup"
 	AuthService_Login_FullMethodName         = "/auth.AuthService/Login"
 	AuthService_ValidateToken_FullMethodName = "/auth.AuthService/ValidateToken"
 )
@@ -28,7 +29,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
-	Signup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*AuthResponse, error)
+	Signup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*SignupResponse, error)
+	VerifySignup(ctx context.Context, in *VerifySignupRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 	ValidateToken(ctx context.Context, in *ValidateRequest, opts ...grpc.CallOption) (*ValidateResponse, error)
 }
@@ -41,10 +43,20 @@ func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
 	return &authServiceClient{cc}
 }
 
-func (c *authServiceClient) Signup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*AuthResponse, error) {
+func (c *authServiceClient) Signup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*SignupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SignupResponse)
+	err := c.cc.Invoke(ctx, AuthService_Signup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) VerifySignup(ctx context.Context, in *VerifySignupRequest, opts ...grpc.CallOption) (*AuthResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AuthResponse)
-	err := c.cc.Invoke(ctx, AuthService_Signup_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, AuthService_VerifySignup_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +87,8 @@ func (c *authServiceClient) ValidateToken(ctx context.Context, in *ValidateReque
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
 type AuthServiceServer interface {
-	Signup(context.Context, *SignupRequest) (*AuthResponse, error)
+	Signup(context.Context, *SignupRequest) (*SignupResponse, error)
+	VerifySignup(context.Context, *VerifySignupRequest) (*AuthResponse, error)
 	Login(context.Context, *LoginRequest) (*AuthResponse, error)
 	ValidateToken(context.Context, *ValidateRequest) (*ValidateResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
@@ -88,8 +101,11 @@ type AuthServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAuthServiceServer struct{}
 
-func (UnimplementedAuthServiceServer) Signup(context.Context, *SignupRequest) (*AuthResponse, error) {
+func (UnimplementedAuthServiceServer) Signup(context.Context, *SignupRequest) (*SignupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Signup not implemented")
+}
+func (UnimplementedAuthServiceServer) VerifySignup(context.Context, *VerifySignupRequest) (*AuthResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifySignup not implemented")
 }
 func (UnimplementedAuthServiceServer) Login(context.Context, *LoginRequest) (*AuthResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
@@ -132,6 +148,24 @@ func _AuthService_Signup_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).Signup(ctx, req.(*SignupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_VerifySignup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifySignupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).VerifySignup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_VerifySignup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).VerifySignup(ctx, req.(*VerifySignupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -184,6 +218,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_Signup_Handler,
 		},
 		{
+			MethodName: "VerifySignup",
+			Handler:    _AuthService_VerifySignup_Handler,
+		},
+		{
 			MethodName: "Login",
 			Handler:    _AuthService_Login_Handler,
 		},
@@ -193,5 +231,5 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/auth.proto",
+	Metadata: "auth.proto",
 }

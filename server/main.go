@@ -1,27 +1,28 @@
 package main
 
 import (
-	"net"
-	"log"
 	"fmt"
+	"log"
+	"net"
+
+	"goAuth/config"
+	pb "goAuth/proto"
 
 	"google.golang.org/grpc"
-	"github.com/joho/godotenv"
-
-	"goAuth/proto"
 )
 
 func init() {
-	err := godotenv.Load()
+	err := config.LoadEnv()
 	if err != nil {
-		panic(err)
+		log.Printf("Warning: Could not load .env file: %v", err)
 	}
+	config.InitRedis()
 }
 
 func main() {
 	db := InitDB()
 	server := grpc.NewServer()
-	proto.RegisterAuthServiceServer(server, &AuthServer{db: db})
+	pb.RegisterAuthServiceServer(server, &AuthServer{db: db})
 
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {

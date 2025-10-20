@@ -5,7 +5,8 @@ package auth;
 option go_package = "goAuth/proto;proto";
 
 service AuthService {
-    rpc Signup (SignupRequest) returns (AuthResponse);
+    rpc Signup (SignupRequest) returns (SignupResponse);
+    rpc VerifySignup (VerifySignupRequest) returns (AuthResponse);
     rpc Login (LoginRequest) returns (AuthResponse);
     rpc ValidateToken (ValidateRequest) returns (ValidateResponse);
 }
@@ -13,6 +14,15 @@ service AuthService {
 message SignupRequest {
     string email = 1;
     string password = 2;
+}
+
+message SignupResponse {
+    string message = 1;
+}
+
+message VerifySignupRequest {
+    string email = 1;
+    string otp = 2;
 }
 
 message LoginRequest {

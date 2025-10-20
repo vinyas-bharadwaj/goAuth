@@ -4,8 +4,15 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+	"time"
+
 	"golang.org/x/crypto/bcrypt"
+	
+	"goAuth/config"
+	"goAuth/mail"
 	"goAuth/proto"
+	"goAuth/utils"
 )
 
 type AuthServer struct {
@@ -13,13 +20,47 @@ type AuthServer struct {
 	db *sql.DB
 }
 
-func (s *AuthServer) Signup(ctx context.Context, req *proto.SignupRequest) (*proto.AuthResponse, error) {
+func (s *AuthServer) Signup(ctx context.Context, req *proto.SignupRequest) (*proto.SignupResponse, error) {
 	hash, _ := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	_, err := s.db.Exec("INSERT INTO users(email, password) VALUES(?, ?)", req.Email, string(hash))
 	if err != nil {
 		return nil, errors.New("Email already exists!")
 	}
+
+	// Generate OTP
+	otp := utils.GenerateOTP()
+
+	// Store the OTP in redis with a 5 min time limit
+	err = config.Rdb.Set(ctx, "otp:"+req.Email, otp, 5*time.Minute).Err()
+	if err != nil {
+		return nil, errors.New("Error in saving OTP to redis")
+	}
+
+	subject := "Your Signup OTP"
+	body := fmt.Sprintf("<p>Your OTP is <b>%s</b>. It expires in 5 minutes.</p>", otp)
+	if err := mail.SendMail(req.Email, subject, body); err != nil {
+		return nil, errors.New("Error sending OTP")
+	}
+
+	return &proto.SignupResponse{Message: "An OTP has been shared to your mail"}, nil
+}
+
+func (s *AuthServer) VerifySignup(ctx context.Context, req *proto.VerifySignupRequest) (*proto.AuthResponse, error) {
+	storedOTP, err := config.Rdb.Get(ctx, "otp:"+req.Email).Result()
+	if err != nil {
+		return nil, errors.New("Error retrieving OTP from redis")
+	}
+
+	if storedOTP != req.Otp {
+		return nil, errors.New("The entered OTP does not match the one sent to your mail")
+	}
+
+	// Delete OTP after verification
+	config.Rdb.Del(ctx, "otp:" + req.Email)
+	
+	// Generate JWT token after successful verification
 	token, _ := GenerateJWT(req.Email)
+	
 	return &proto.AuthResponse{Token: token, Message: "Signup successful"}, nil
 }
 
