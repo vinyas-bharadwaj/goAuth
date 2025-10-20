@@ -39,10 +39,13 @@ func (s *AuthServer) Signup(ctx context.Context, req *pb.SignupRequest) (*pb.Sig
 		return nil, errors.New("Error in saving OTP to redis")
 	}
 
-	subject := "Your Signup OTP"
-	body := fmt.Sprintf("<p>Your OTP is <b>%s</b>. It expires in 5 minutes.</p>", otp)
-	if err := mail.SendMail(req.Email, subject, body); err != nil {
-		return nil, errors.New("Error sending OTP")
+	// Skip actual email sending in CI environment
+	if !testing.Short() {
+		subject := "Your Signup OTP"
+		body := fmt.Sprintf("<p>Your OTP is <b>%s</b>. It expires in 5 minutes.</p>", otp)
+		if err := mail.SendMail(req.Email, subject, body); err != nil {
+			return nil, errors.New("Error sending OTP")
+		}
 	}
 
 	return &pb.SignupResponse{Message: "An OTP has been shared to your mail"}, nil
