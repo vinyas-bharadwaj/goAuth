@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	pb "goAuth/proto"
+	pb "goAuth/shared/proto"
 )
 
 func TestLogin(t *testing.T) {

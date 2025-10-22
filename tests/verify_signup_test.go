@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"goAuth/config"
-	pb "goAuth/proto"
+	"goAuth/shared/config"
+	pb "goAuth/shared/proto"
 )
 
 func TestVerifySignup(t *testing.T) {

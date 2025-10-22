@@ -398,7 +398,7 @@ const file_auth_proto_rawDesc = "" +
 	"\x06Signup\x12\x13.auth.SignupRequest\x1a\x14.auth.SignupResponse\x12=\n" +
 	"\fVerifySignup\x12\x19.auth.VerifySignupRequest\x1a\x12.auth.AuthResponse\x12/\n" +
 	"\x05Login\x12\x12.auth.LoginRequest\x1a\x12.auth.AuthResponse\x12>\n" +
-	"\rValidateToken\x12\x15.auth.ValidateRequest\x1a\x16.auth.ValidateResponseB\x14Z\x12goAuth/proto;protob\x06proto3"
+	"\rValidateToken\x12\x15.auth.ValidateRequest\x1a\x16.auth.ValidateResponseB\x1bZ\x19goAuth/shared/proto;protob\x06proto3"
 
 var (
 	file_auth_proto_rawDescOnce sync.Once

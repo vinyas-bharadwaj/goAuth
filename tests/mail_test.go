@@ -4,8 +4,8 @@ import (
 	"testing"
 	"os"
 
-	"goAuth/config"
-	"goAuth/mail"
+	"goAuth/shared/config"
+	"goAuth/shared/utils"
 )
 
 func TestSendMail(t *testing.T) {
@@ -29,7 +29,7 @@ func TestSendMail(t *testing.T) {
 	}
 
 	// Test sending mail
-	err := mail.SendMail(
+	err := utils.SendMail(
 		smtpEmail,
 		"Test Email from goAuth",
 		"This is a test email to verify the mail functionality is working correctly.",

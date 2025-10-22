@@ -9,10 +9,9 @@ import (
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
-	"goAuth/config"
-	"goAuth/mail"
-	pb "goAuth/proto"
-	"goAuth/utils"
+	"goAuth/shared/config"
+	pb "goAuth/shared/proto"
+	"goAuth/shared/utils"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -43,7 +42,7 @@ func (s *AuthServer) Signup(ctx context.Context, req *pb.SignupRequest) (*pb.Sig
 	if !testing.Short() {
 		subject := "Your Signup OTP"
 		body := fmt.Sprintf("<p>Your OTP is <b>%s</b>. It expires in 5 minutes.</p>", otp)
-		if err := mail.SendMail(req.Email, subject, body); err != nil {
+		if err := utils.SendMail(req.Email, subject, body); err != nil {
 			return nil, errors.New("Error sending OTP")
 		}
 	}

@@ -1,6 +1,6 @@
-# GoAuth 🔐
+# GoAuth - Microservices Architecture 🔐
 
-A simple gRPC-based authentication service built with Go, featuring user registration, login, and JWT token validation.
+A multi-service authentication system with gRPC backend and FastAPI gateway.
 
 ## Features
 
