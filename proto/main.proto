@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package main;
+
+option go_package = "proto/gen;grpcapipb";
+
+// All authentication related services
+service AuthService {
+    // Login rpc allows users to login with username + password 
+    rpc Login(LoginRequest) returns (LoginResponse);
+    // Register allows users to register themselves into the database (default role is 'user')
+    rpc Register(RegisterRequest) returns (LoginResponse);
+    // ChangeRole allows only super admins to change someones role
+    rpc ChangeRole(ChangeRoleRequest) returns (ChangeRoleResponse);
+    // Logout allows users to logout
+    rpc Logout(EmptyRequest) returns (LogoutResponse);
+
+}
+
+// The schema for login rpc request
+message LoginRequest {
+    string username = 1;
+    string password = 2;
+}
+
+// The schema for login rpc response
+message LoginResponse {
+    bool status = 1;
+    string token = 2;
+}
+
+// The schema for register rpc request (only fields user can provide)
+message RegisterRequest {
+    string username = 1;
+    string password = 2;
+    string email = 3;
+}
+
+// The schema for each user
+message User {
+    string id = 1;
+    string username = 2;
+    string password = 3;
+    string email = 4;
+    string role = 5;
+    string password_token_expires = 6;
+}
+
+// The schema for ChangeRole rpc request
+message ChangeRoleRequest {
+    string id = 1;
+    string role = 2;
+}
+
+// The schema for ChangeRole rpc response
+message ChangeRoleResponse {
+    bool status = 1;
+}
+
+// The schema for Logout rpc request
+message EmptyRequest {}
+
+// The schema for Logout rpc response
+message LogoutResponse {
+    bool status = 1;
+}
+
+
