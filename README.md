@@ -124,6 +124,4 @@ JWT_EXPIRES_IN=15m
 GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 ```
 
----
 
-For deployment details, see [DEPLOYMENT.md](DEPLOYMENT.md)
