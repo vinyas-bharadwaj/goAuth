@@ -6,7 +6,6 @@ Production-ready gRPC authentication service with JWT tokens, traditional auth, 
 
 ```bash
 # Setup
-cp .env.example .env  # Configure JWT_SECRET, GOOGLE_CLIENT_ID, MONGODB_URI
 sudo systemctl start mongod
 go run cmd/api/main.go
 ```
