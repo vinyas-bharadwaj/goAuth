@@ -6,4 +6,6 @@ type User struct {
 	Email    string `protobuf:"email,omitempty" bson:"email,omitempty"`
 	Password string `protobuf:"password,omitempty" bson:"password,omitempty"`
 	Role     string `protobuf:"role,omitempty" bson:"role,omitempty"`
+	GoogleId string `protobuf:"google_id,omitempty" bson:"google_id,omitempty"`
+	Picture  string `protobuf:"picture,omitempty" bson:"picture,omitempty"`
 }

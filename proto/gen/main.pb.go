@@ -197,6 +197,8 @@ type User struct {
 	Email                string                 `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
 	Role                 string                 `protobuf:"bytes,5,opt,name=role,proto3" json:"role,omitempty"`
 	PasswordTokenExpires string                 `protobuf:"bytes,6,opt,name=password_token_expires,json=passwordTokenExpires,proto3" json:"password_token_expires,omitempty"`
+	GoogleId             string                 `protobuf:"bytes,7,opt,name=google_id,json=googleId,proto3" json:"google_id,omitempty"`
+	Picture              string                 `protobuf:"bytes,8,opt,name=picture,proto3" json:"picture,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -269,6 +271,20 @@ func (x *User) GetRole() string {
 func (x *User) GetPasswordTokenExpires() string {
 	if x != nil {
 		return x.PasswordTokenExpires
+	}
+	return ""
+}
+
+func (x *User) GetGoogleId() string {
+	if x != nil {
+		return x.GoogleId
+	}
+	return ""
+}
+
+func (x *User) GetPicture() string {
+	if x != nil {
+		return x.Picture
 	}
 	return ""
 }
@@ -453,6 +469,112 @@ func (x *LogoutResponse) GetStatus() bool {
 	return false
 }
 
+// The schema for GoogleLogin rpc request
+type GoogleLoginRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	IdToken       string                 `protobuf:"bytes,1,opt,name=id_token,json=idToken,proto3" json:"id_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GoogleLoginRequest) Reset() {
+	*x = GoogleLoginRequest{}
+	mi := &file_proto_main_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GoogleLoginRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GoogleLoginRequest) ProtoMessage() {}
+
+func (x *GoogleLoginRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_main_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GoogleLoginRequest.ProtoReflect.Descriptor instead.
+func (*GoogleLoginRequest) Descriptor() ([]byte, []int) {
+	return file_proto_main_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GoogleLoginRequest) GetIdToken() string {
+	if x != nil {
+		return x.IdToken
+	}
+	return ""
+}
+
+// The schema for GoogleLogin rpc response
+type GoogleLoginResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	User          *User                  `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GoogleLoginResponse) Reset() {
+	*x = GoogleLoginResponse{}
+	mi := &file_proto_main_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GoogleLoginResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GoogleLoginResponse) ProtoMessage() {}
+
+func (x *GoogleLoginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_main_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GoogleLoginResponse.ProtoReflect.Descriptor instead.
+func (*GoogleLoginResponse) Descriptor() ([]byte, []int) {
+	return file_proto_main_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GoogleLoginResponse) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *GoogleLoginResponse) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+func (x *GoogleLoginResponse) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
 var File_proto_main_proto protoreflect.FileDescriptor
 
 const file_proto_main_proto_rawDesc = "" +
@@ -467,14 +589,16 @@ const file_proto_main_proto_rawDesc = "" +
 	"\x0fRegisterRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\"\xae\x01\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\"\xe5\x01\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x03 \x01(\tR\bpassword\x12\x14\n" +
 	"\x05email\x18\x04 \x01(\tR\x05email\x12\x12\n" +
 	"\x04role\x18\x05 \x01(\tR\x04role\x124\n" +
-	"\x16password_token_expires\x18\x06 \x01(\tR\x14passwordTokenExpires\"7\n" +
+	"\x16password_token_expires\x18\x06 \x01(\tR\x14passwordTokenExpires\x12\x1b\n" +
+	"\tgoogle_id\x18\a \x01(\tR\bgoogleId\x12\x18\n" +
+	"\apicture\x18\b \x01(\tR\apicture\"7\n" +
 	"\x11ChangeRoleRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04role\x18\x02 \x01(\tR\x04role\",\n" +
@@ -482,13 +606,21 @@ const file_proto_main_proto_rawDesc = "" +
 	"\x06status\x18\x01 \x01(\bR\x06status\"\x0e\n" +
 	"\fEmptyRequest\"(\n" +
 	"\x0eLogoutResponse\x12\x16\n" +
-	"\x06status\x18\x01 \x01(\bR\x06status2\xec\x01\n" +
+	"\x06status\x18\x01 \x01(\bR\x06status\"/\n" +
+	"\x12GoogleLoginRequest\x12\x19\n" +
+	"\bid_token\x18\x01 \x01(\tR\aidToken\"}\n" +
+	"\x13GoogleLoginResponse\x12!\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12\x1e\n" +
+	"\x04user\x18\x03 \x01(\v2\n" +
+	".main.UserR\x04user2\xb0\x02\n" +
 	"\vAuthService\x120\n" +
 	"\x05Login\x12\x12.main.LoginRequest\x1a\x13.main.LoginResponse\x126\n" +
 	"\bRegister\x12\x15.main.RegisterRequest\x1a\x13.main.LoginResponse\x12?\n" +
 	"\n" +
 	"ChangeRole\x12\x17.main.ChangeRoleRequest\x1a\x18.main.ChangeRoleResponse\x122\n" +
-	"\x06Logout\x12\x12.main.EmptyRequest\x1a\x14.main.LogoutResponseB\x15Z\x13proto/gen;grpcapipbb\x06proto3"
+	"\x06Logout\x12\x12.main.EmptyRequest\x1a\x14.main.LogoutResponse\x12B\n" +
+	"\vGoogleLogin\x12\x18.main.GoogleLoginRequest\x1a\x19.main.GoogleLoginResponseB\x15Z\x13proto/gen;grpcapipbb\x06proto3"
 
 var (
 	file_proto_main_proto_rawDescOnce sync.Once
@@ -502,31 +634,36 @@ func file_proto_main_proto_rawDescGZIP() []byte {
 	return file_proto_main_proto_rawDescData
 }
 
-var file_proto_main_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_proto_main_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_proto_main_proto_goTypes = []any{
-	(*LoginRequest)(nil),       // 0: main.LoginRequest
-	(*LoginResponse)(nil),      // 1: main.LoginResponse
-	(*RegisterRequest)(nil),    // 2: main.RegisterRequest
-	(*User)(nil),               // 3: main.User
-	(*ChangeRoleRequest)(nil),  // 4: main.ChangeRoleRequest
-	(*ChangeRoleResponse)(nil), // 5: main.ChangeRoleResponse
-	(*EmptyRequest)(nil),       // 6: main.EmptyRequest
-	(*LogoutResponse)(nil),     // 7: main.LogoutResponse
+	(*LoginRequest)(nil),        // 0: main.LoginRequest
+	(*LoginResponse)(nil),       // 1: main.LoginResponse
+	(*RegisterRequest)(nil),     // 2: main.RegisterRequest
+	(*User)(nil),                // 3: main.User
+	(*ChangeRoleRequest)(nil),   // 4: main.ChangeRoleRequest
+	(*ChangeRoleResponse)(nil),  // 5: main.ChangeRoleResponse
+	(*EmptyRequest)(nil),        // 6: main.EmptyRequest
+	(*LogoutResponse)(nil),      // 7: main.LogoutResponse
+	(*GoogleLoginRequest)(nil),  // 8: main.GoogleLoginRequest
+	(*GoogleLoginResponse)(nil), // 9: main.GoogleLoginResponse
 }
 var file_proto_main_proto_depIdxs = []int32{
-	0, // 0: main.AuthService.Login:input_type -> main.LoginRequest
-	2, // 1: main.AuthService.Register:input_type -> main.RegisterRequest
-	4, // 2: main.AuthService.ChangeRole:input_type -> main.ChangeRoleRequest
-	6, // 3: main.AuthService.Logout:input_type -> main.EmptyRequest
-	1, // 4: main.AuthService.Login:output_type -> main.LoginResponse
-	1, // 5: main.AuthService.Register:output_type -> main.LoginResponse
-	5, // 6: main.AuthService.ChangeRole:output_type -> main.ChangeRoleResponse
-	7, // 7: main.AuthService.Logout:output_type -> main.LogoutResponse
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	3, // 0: main.GoogleLoginResponse.user:type_name -> main.User
+	0, // 1: main.AuthService.Login:input_type -> main.LoginRequest
+	2, // 2: main.AuthService.Register:input_type -> main.RegisterRequest
+	4, // 3: main.AuthService.ChangeRole:input_type -> main.ChangeRoleRequest
+	6, // 4: main.AuthService.Logout:input_type -> main.EmptyRequest
+	8, // 5: main.AuthService.GoogleLogin:input_type -> main.GoogleLoginRequest
+	1, // 6: main.AuthService.Login:output_type -> main.LoginResponse
+	1, // 7: main.AuthService.Register:output_type -> main.LoginResponse
+	5, // 8: main.AuthService.ChangeRole:output_type -> main.ChangeRoleResponse
+	7, // 9: main.AuthService.Logout:output_type -> main.LogoutResponse
+	9, // 10: main.AuthService.GoogleLogin:output_type -> main.GoogleLoginResponse
+	6, // [6:11] is the sub-list for method output_type
+	1, // [1:6] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_proto_main_proto_init() }
@@ -540,7 +677,7 @@ func file_proto_main_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_main_proto_rawDesc), len(file_proto_main_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

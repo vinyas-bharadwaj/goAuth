@@ -14,7 +14,8 @@ service AuthService {
     rpc ChangeRole(ChangeRoleRequest) returns (ChangeRoleResponse);
     // Logout allows users to logout
     rpc Logout(EmptyRequest) returns (LogoutResponse);
-
+    // GoogleLogin allows users to login with Google OAuth
+    rpc GoogleLogin(GoogleLoginRequest) returns (GoogleLoginResponse);
 }
 
 // The schema for login rpc request
@@ -44,6 +45,8 @@ message User {
     string email = 4;
     string role = 5;
     string password_token_expires = 6;
+    string google_id = 7;
+    string picture = 8;
 }
 
 // The schema for ChangeRole rpc request
@@ -63,6 +66,18 @@ message EmptyRequest {}
 // The schema for Logout rpc response
 message LogoutResponse {
     bool status = 1;
+}
+
+// The schema for GoogleLogin rpc request
+message GoogleLoginRequest {
+    string id_token = 1;
+}
+
+// The schema for GoogleLogin rpc response
+message GoogleLoginResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+    User user = 3;
 }
 
 

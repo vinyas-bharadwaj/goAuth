@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  goauth:
+    build: .
+    container_name: goauth-server
+    ports:
+      - "50051:50051"
+    environment:
+      - PORT=:50051
+      - MONGODB_URI=mongodb://mongodb:27017
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-60m}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+    networks:
+      - goauth-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: goauth-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+    networks:
+      - goauth-network
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  goauth-network:
+    driver: bridge

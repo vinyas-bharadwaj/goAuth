@@ -18,8 +18,9 @@ func AuthenticationInterceptor(ctx context.Context, req interface{}, info *grpc.
 
 	// Skip some rpcs
 	skipMethods := map[string]bool{
-		"/main.AuthService/Register": true,
-		"/main.AuthService/Login":    true,
+		"/main.AuthService/Register":    true,
+		"/main.AuthService/Login":       true,
+		"/main.AuthService/GoogleLogin": true,
 	}
 
 	if skipMethods[info.FullMethod] {

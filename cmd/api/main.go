@@ -16,10 +16,10 @@ import (
 )
 
 func init() {
+	// Load .env file if it exists (optional for Docker deployments)
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("Error loading the .env file: %v", err)
-		return
+		log.Println("No .env file found, using environment variables")
 	}
 }
 

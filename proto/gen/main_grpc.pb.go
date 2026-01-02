@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_Login_FullMethodName      = "/main.AuthService/Login"
-	AuthService_Register_FullMethodName   = "/main.AuthService/Register"
-	AuthService_ChangeRole_FullMethodName = "/main.AuthService/ChangeRole"
-	AuthService_Logout_FullMethodName     = "/main.AuthService/Logout"
+	AuthService_Login_FullMethodName       = "/main.AuthService/Login"
+	AuthService_Register_FullMethodName    = "/main.AuthService/Register"
+	AuthService_ChangeRole_FullMethodName  = "/main.AuthService/ChangeRole"
+	AuthService_Logout_FullMethodName      = "/main.AuthService/Logout"
+	AuthService_GoogleLogin_FullMethodName = "/main.AuthService/GoogleLogin"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -39,6 +40,8 @@ type AuthServiceClient interface {
 	ChangeRole(ctx context.Context, in *ChangeRoleRequest, opts ...grpc.CallOption) (*ChangeRoleResponse, error)
 	// Logout allows users to logout
 	Logout(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
+	// GoogleLogin allows users to login with Google OAuth
+	GoogleLogin(ctx context.Context, in *GoogleLoginRequest, opts ...grpc.CallOption) (*GoogleLoginResponse, error)
 }
 
 type authServiceClient struct {
@@ -89,6 +92,16 @@ func (c *authServiceClient) Logout(ctx context.Context, in *EmptyRequest, opts .
 	return out, nil
 }
 
+func (c *authServiceClient) GoogleLogin(ctx context.Context, in *GoogleLoginRequest, opts ...grpc.CallOption) (*GoogleLoginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GoogleLoginResponse)
+	err := c.cc.Invoke(ctx, AuthService_GoogleLogin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -103,6 +116,8 @@ type AuthServiceServer interface {
 	ChangeRole(context.Context, *ChangeRoleRequest) (*ChangeRoleResponse, error)
 	// Logout allows users to logout
 	Logout(context.Context, *EmptyRequest) (*LogoutResponse, error)
+	// GoogleLogin allows users to login with Google OAuth
+	GoogleLogin(context.Context, *GoogleLoginRequest) (*GoogleLoginResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -124,6 +139,9 @@ func (UnimplementedAuthServiceServer) ChangeRole(context.Context, *ChangeRoleReq
 }
 func (UnimplementedAuthServiceServer) Logout(context.Context, *EmptyRequest) (*LogoutResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedAuthServiceServer) GoogleLogin(context.Context, *GoogleLoginRequest) (*GoogleLoginResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GoogleLogin not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -218,6 +236,24 @@ func _AuthService_Logout_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_GoogleLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GoogleLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GoogleLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_GoogleLogin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GoogleLogin(ctx, req.(*GoogleLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -240,6 +276,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Logout",
 			Handler:    _AuthService_Logout_Handler,
+		},
+		{
+			MethodName: "GoogleLogin",
+			Handler:    _AuthService_GoogleLogin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
